@@ -416,46 +416,68 @@
             <div class="gallery" id="gallery"></div>
         </div>
         
-        <div class="section" style="text-align: center;">
-            <h2>🎮 Игра: Змейка (Snake)</h2>
-            <p style="color: #666; margin: 20px 0;">Подключитесь к классической игре Змейка прямо на праздничном сайте!</p>
+        <div class="section" style="text-align: center; display: none;" id="snake-game-section">
+            <h2>🎮 JEU: Serpent (Snake)</h2>
+            <p style="color: #666; margin: 20px 0;">Jouez au jeu classique Serpent directement sur le site d'anniversaire !</p>
             <div class="game-container" id="snake-game">
-                <h1>🐍 Змейка</h1>
+                <h1>🐍 Serpent</h1>
                 <div class="info">
-                    <div class="score">Счёт: <span id="snake-score">0</span></div>
-                    <div class="high-score">Рекорд: <span id="snake-highscore">0</span></div>
+                    <div class="score">Score: <span id="snake-score">0</span></div>
+                    <div class="high-score">Record: <span id="snake-highscore">0</span></div>
                 </div>
                 <canvas id="gameCanvas" width="600" height="600"></canvas>
                 <div class="controls">
-                    Управление: ← ↑ → ↓ или WASD | Пробел - пауза
+                    Contrôle : ← ↑ → ↓ ou WASD | Espace - pause
                 </div>
                 <div class="game-over" id="gameOver">
-                    <h2>Игра окончена!</h2>
-                    <p>Ваш счёт: <span id="snake-finalScore">0</span></p>
-                    <button onclick="restartGame()">Играть снова</button>
+                    <h2>Fin de jeu !</h2>
+                    <p>Votre score: <span id="snake-finalScore">0</span></p>
+                    <button onclick="restartGame()">Jouer à nouveau</button>
                 </div>
             </div>
         </div>
 
         <!-- Breakers (Arkanoid) Game -->
-        <div class="section" style="text-align: center;">
-            <h2>🟦 Игра: Арканойд (Breakers)</h2>
-            <p style="color: #666; margin: 20px 0;">Классический арканойд — ломай кирпичи!</p>
+        <div class="section" style="text-align: center; display: none;" id="breakers-game-section">
+            <h2>🟦 JEU: Arkanoid (Breakers)</h2>
+            <p style="color: #666; margin: 20px 0;">Le classique Arkanoid — cassez les briques !</p>
             <div id="breakers">
                 <div class="info">
-                    <div class="score">Счёт: <span id="breakers-score">0</span></div>
-                    <div class="high-score">Рекорд: <span id="breakers-highscore">0</span></div>
+                    <div class="score">Score: <span id="breakers-score">0</span></div>
+                    <div class="high-score">Record: <span id="breakers-highscore">0</span></div>
                 </div>
                 <canvas id="breakCanvas" width="600" height="450"></canvas>
                 <div class="controls">
-                    Управление: ← → или A/D | Пробел - старт/пауза
+                    Contrôle : ← → ou A/D | Espace - démarrer/pause
                 </div>
                 <div class="game-over" id="breakersGameOver">
-                    <h2>Игра окончена!</h2>
-                    <p>Ваш счёт: <span id="breakers-finalScore">0</span></p>
-                    <button onclick="startBreakersGame()">Играть снова</button>
+                    <h2>Fin de jeu !</h2>
+                    <p>Votre score: <span id="breakers-finalScore">0</span></p>
+                    <button onclick="startBreakersGame()">Jouer à nouveau</button>
                 </div>
             </div>
+        </div>
+        
+        <!-- Leaderboard Section -->
+        <div class="section" style="text-align: center; display: none;" id="leaderboard-section">
+            <h2>🏆 Tableau des Scores 🏆</h2>
+            <p style="margin-bottom: 20px;">Les meilleurs scores des joueurs !</p>
+            <div style="overflow-x: auto; margin: 20px 0;">
+                <table id="leaderboard-table" style="width: 100%; border-collapse: collapse; background: rgba(255,215,0,0.1); border-radius: 10px; overflow: hidden;">
+                    <thead>
+                        <tr style="background: rgba(255,215,0,0.3);">
+                            <th style="padding: 12px; text-align: center;">#</th>
+                            <th style="padding: 12px; text-align: left;">Nom</th>
+                            <th style="padding: 12px; text-align: center;">Jeu</th>
+                            <th style="padding: 12px; text-align: center;">Score</th>
+                            <th style="padding: 12px; text-align: center;">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-body">
+                    </tbody>
+                </table>
+            </div>
+            <button onclick="clearLeaderboard()" style="margin-top: 10px; padding: 8px 16px; background: #ff6b6b; color: white; border: none; border-radius: 5px; cursor: pointer;">Vider le tableau</button>
         </div>
         
         <div class="section" style="text-align: center;">
@@ -476,11 +498,12 @@
         </div>
     </div>
     
-    <!-- Lightbox -->
+            <!-- Lightbox -->
     <div class="lightbox" id="lightbox">
         <div class="lightbox-close" onclick="closeLightbox()">×</div>
         <img id="lightbox-img" src="" alt="Photo">
     </div>
+    
     
     <script>
         // Load photos dynamically
@@ -496,10 +519,38 @@
         ];
         
         const gallery = document.getElementById('gallery');
+        let secretGamesUnlocked = false;
+        let photoClickCount = 0;
+        
         photos.forEach(photo => {
             const item = document.createElement('div');
             item.className = 'photo-item';
-            item.onclick = () => openLightbox('photos/' + photo);
+            item.onclick = () => {
+                photoClickCount++;
+                if (photoClickCount >= 3 && !secretGamesUnlocked) {
+                    secretGamesUnlocked = true;
+                    document.getElementById('snake-game-section').style.display = 'block';
+                    document.getElementById('breakers-game-section').style.display = 'block';
+                    // Показать уведомление
+                    const toast = document.createElement('div');
+                    toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#1e3c72,#7e22ce);color:#fff;padding:20px 40px;border-radius:15px;z-index:9999;font-family:Georgia,serif;font-size:1.2em;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,0.5);animation:fadeOut 3s ease forwards;';
+                    toast.innerHTML = '<div style="font-size:2em;">🎮</div><div style="margin:10px 0;font-weight:bold;">Jeux Secrets Déverrouillés !</div><div style="font-size:0.9em;opacity:0.8;">Cliquez sur une photo 3 fois pour dévoiler les jeux</div>';
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 5000);
+                } else if (secretGamesUnlocked) {
+                    // Уже открыто — можно скрыть
+                    document.getElementById('snake-game-section').style.display = 'none';
+                    document.getElementById('breakers-game-section').style.display = 'none';
+                    secretGamesUnlocked = false;
+                } else {
+                    // Показать подсказку
+                    const hint = document.createElement('div');
+                    hint.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.8);color:#ffd700;padding:10px 20px;border-radius:10px;z-index:9999;font-family:Georgia,serif;font-size:1em;box-shadow:0 5px 20px rgba(0,0,0,0.3);';
+                    hint.textContent = `Клик ${photoClickCount}/3 для открытия игр`;
+                    document.body.appendChild(hint);
+                    setTimeout(() => hint.remove(), 2000);
+                }
+            };
             
             const img = document.createElement('img');
             img.src = 'photos/' + photo;
@@ -520,6 +571,75 @@
         }
         
         document.getElementById('lightbox').onclick = closeLightbox;
+
+        // Tableau des scores (Leaderboard)
+        let leaderboardData = [];
+
+        function loadLeaderboard() {
+            const saved = localStorage.getItem('leaderboardData');
+            if (saved) {
+                try { leaderboardData = JSON.parse(saved); } catch(e) { leaderboardData = []; }
+                displayLeaderboard();
+            }
+        }
+
+        function saveLeaderboard() {
+            localStorage.setItem('leaderboardData', JSON.stringify(leaderboardData));
+        }
+
+        function addToLeaderboard(name, game, score) {
+            leaderboardData.push({
+                name: name || 'Anonyme',
+                game: game,
+                score: score,
+                date: new Date().toLocaleDateString('fr-FR')
+            });
+            leaderboardData.sort((a, b) => b.score - a.score);
+            leaderboardData = leaderboardData.slice(0, 10);
+            saveLeaderboard();
+            displayLeaderboard();
+            document.getElementById('leaderboard-section').style.display = 'block';
+        }
+
+        function displayLeaderboard() {
+            const body = document.getElementById('leaderboard-body');
+            if (!body) return;
+            body.innerHTML = '';
+            const medals = ['🥇', '🥈', '🥉'];
+            leaderboardData.forEach((entry, i) => {
+                const row = document.createElement('tr');
+                row.style.background = i % 2 === 0 ? 'rgba(255,255,255,0.05)' : 'transparent';
+                row.innerHTML =
+                    '<td style="padding:10px;text-align:center;font-size:1.2em;">' + (medals[i] || (i+1)) + '</td>' +
+                    '<td style="padding:10px;text-align:left;font-weight:bold;">' + entry.name + '</td>' +
+                    '<td style="padding:10px;text-align:center;">' + entry.game + '</td>' +
+                    '<td style="padding:10px;text-align:center;font-weight:bold;color:#ffd700;">' + entry.score + '</td>' +
+                    '<td style="padding:10px;text-align:center;opacity:0.7;">' + entry.date + '</td>';
+                body.appendChild(row);
+            });
+            if (leaderboardData.length === 0) {
+                body.innerHTML = '<tr><td colspan="5" style="padding:20px;text-align:center;opacity:0.6;">Aucun score pour le moment. Jouez !</td></tr>';
+            }
+        }
+
+        function clearLeaderboard() {
+            if (confirm('Vider le tableau des scores ?')) {
+                leaderboardData = [];
+                saveLeaderboard();
+                displayLeaderboard();
+            }
+        }
+
+        // Demander le nom du joueur quand il finit une partie
+        function askPlayerName(game, score) {
+            let name = prompt('Félicitations ! Score : ' + score + '\n\nQuel est votre nom pour le tableau des scores ?');
+            if (name !== null) {
+                name = name.trim() || 'Anonyme';
+                addToLeaderboard(name, game, score);
+            }
+        }
+
+        loadLeaderboard();
 
         // Snake game JavaScript
         const canvas = document.getElementById('gameCanvas');
@@ -725,6 +845,9 @@
             
             finalScoreElement.textContent = score;
             gameOverElement.classList.add('active');
+            
+            // Ajouter au tableau des scores
+            askPlayerName('Serpent', score);
         }
         
         function restartGame() {
