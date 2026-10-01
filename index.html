@@ -19,6 +19,105 @@
             overflow-x: hidden;
         }
         
+        /* Mobile adaptations */
+        @media (max-width: 768px) {
+            body {
+                font-size: 14px;
+            }
+            
+            h1 {
+                font-size: 2.5em !important;
+            }
+            
+            .age {
+                font-size: 5em !important;
+            }
+            
+            .subtitle {
+                font-size: 1.3em !important;
+            }
+            
+            .electrician-badge {
+                font-size: 1em !important;
+                padding: 10px 20px !important;
+            }
+            
+            .section h2 {
+                font-size: 1.8em !important;
+            }
+            
+            .message-box {
+                font-size: 1em !important;
+                padding: 20px !important;
+            }
+            
+            .tribute-grid {
+                grid-template-columns: 1fr !important;
+            }
+            
+            .gallery {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
+                gap: 10px !important;
+            }
+            
+            canvas {
+                max-width: 100% !important;
+                height: auto !important;
+            }
+            
+            #gameCanvas {
+                width: 100% !important;
+                height: auto !important;
+            }
+            
+            #breakCanvas {
+                width: 100% !important;
+                height: auto !important;
+            }
+            
+            .controls {
+                font-size: 0.9em !important;
+            }
+            
+            table {
+                font-size: 0.85em !important;
+            }
+            
+            th, td {
+                padding: 6px !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            header {
+                padding: 30px 15px !important;
+            }
+            
+            h1 {
+                font-size: 2em !important;
+            }
+            
+            .age {
+                font-size: 4em !important;
+            }
+            
+            .section {
+                padding: 20px !important;
+            }
+            
+            .gallery {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+            
+            .tribute-icon {
+                font-size: 2.5em !important;
+            }
+            
+            .tribute-title {
+                font-size: 1.1em !important;
+            }
+        }
+        
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -1071,6 +1170,8 @@
                 localStorage.setItem('breakersHighScore', breakHighScore);
                 breakHighScoreElement.textContent = breakHighScore;
             }
+            // Добавить в таблицу лидеров
+            askPlayerName('Arkanoid', breakScore);
         }
         
         function breakWin() {
@@ -1085,6 +1186,8 @@
                 localStorage.setItem('breakersHighScore', breakHighScore);
                 breakHighScoreElement.textContent = breakHighScore;
             }
+            // Добавить в таблицу лидеров
+            askPlayerName('Arkanoid', breakScore);
         }
         
         function movePaddleLeft() { paddle.x -= 12; }
